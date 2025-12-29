@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standoff 2 - Рулетка</title>
+    <style>
+        @font-face {
+            font-family: 'Standoff';
+            src: url('Bebasbolt-1.1.4-release.otf');
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Standoff', Arial, sans-serif;
+            background: #0a0a14;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav {
+            background: #1a1a2e;
+            border-bottom: 3px solid #ff3a3a;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: #ff3a3a;
+            font-size: 32px;
+            text-shadow: 0 0 10px rgba(255, 58, 58, 0.5);
+            letter-spacing: 2px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 58, 58, 0.2);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .balance {
+            color: #ffd700;
+            font-size: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            text-align: center;
+            flex-grow: 1;
+        }
+        
+        .title {
+            color: #ff3a3a;
+            font-size: 48px;
+            margin: 30px 0;
+            text-shadow: 0 0 15px rgba(255, 58, 58, 0.3);
+        }
+
+        .roulette-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            margin: 40px 0;
+            height: 200px;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 15px;
+            border: 3px solid #2d2d4e;
+        }
+        
+        .roulette-track {
+            display: flex;
+            position: absolute;
+            left: 0;
+            top: 20px;
+            gap: 20px;
+            animation: scroll 20s linear infinite;
+            padding: 0 20px;
+        }
+        
+        .skin-card {
+            min-width: 160px;
+            background: #1a1a2e;
+            border-radius: 10px;
+            border: 2px solid #2d2d4e;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .skin-card:hover {
+            border-color: #ff3a3a;
+            transform: translateY(-5px);
+        }
+        
+        .skin-emoji {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .skin-name {
+            font-size: 18px;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .skin-rarity {
+            font-size: 16px;
+        }
+        
+        .rarity-legendary { color: #ff3a3a; }
+        .rarity-mythical { color: #9c27b0; }
+        .rarity-epic { color: #4caf50; }
+        .rarity-rare { color: #2196f3; }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .control-btn {
+            background: #ff3a3a;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-family: 'Standoff';
+            font-size: 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .control-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .cases {
+            margin: 60px 0;
+        }
+        
+        .cases-title {
+            color: white;
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+        
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .case-card {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #2d2d4e;
+            transition: all 0.3s;
+        }
+        
+        .case-card:hover {
+            border-color: #ff3a3a;
+            transform: translateY(-10px);
+        }
+        
+        .case-price {
+            color: #ffd700;
+            font-size: 28px;
+            margin: 15px 0;
+        }
+        
+        .footer {
+            background: #1a1a2e;
+            border-top: 3px solid #ff3a3a;
+            margin-top: auto;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            color: #ff3a3a;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #888;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">STANDOFF 2</div>
+            <ul class="nav-links">
+                <li><a href="#roulette">Рулетка</a></li>
+                <li><a href="#cases">Кейсы</a></li>
+                <li><a href="#skins">Скины</a></li>
+                <li><a href="#market">Рынок</a></li>
+                <li><a href="#support">Поддержка</a></li>
+            </ul>
+            <div class="user-info">
+                <div class="balance">2,399 ₽</div>
+                <a href="#auth" class="control-btn" style="padding: 10px 25px; font-size: 18px;">Войти</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="title">СТАНДОФФ 2 РУЛЕТКА</h1>
+        
+        <div class="roulette-wrapper" id="roulette">
+            <div class="center-line"></div>
+            <div class="roulette-track">
+                <div class="skin-card">
+                    <div class="skin-emoji">🐉</div>
+                    <div class="skin-name">DRAGON LORE</div>
+                    <div class="skin-rarity rarity-legendary">LEGENDARY</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🔮</div>
+                    <div class="skin-name">ASIIMOV</div>
+                    <div class="skin-rarity rarity-mythical">MYTHICAL</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🌈</div>
+                    <div class="skin-name">FADE</div>
+                    <div class="skin-rarity rarity-rare">RARE</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🌀</div>
+                    <div class="skin-name">DOPPLER</div>
+                    <div class="skin-rarity rarity-legendary">LEGENDARY</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">⚡</div>
+                    <div class="skin-name">CYREX</div>
+                    <div class="skin-rarity rarity-epic">EPIC</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🔴</div>
+                    <div class="skin-name">REDLINE</div>
+                    <div class="skin-rarity rarity-rare">RARE</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🎨</div>
+                    <div class="skin-name">HYPERBEAST</div>
+                    <div class="skin-rarity rarity-legendary">LEGENDARY</div>
+                </div>
+
+                <div class="skin-card">
+                    <div class="skin-emoji">🐉</div>
+                    <div class="skin-name">DRAGON LORE</div>
+                    <div class="skin-rarity rarity-legendary">LEGENDARY</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🔮</div>
+                    <div class="skin-name">ASIIMOV</div>
+                    <div class="skin-rarity rarity-mythical">MYTHICAL</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🌈</div>
+                    <div class="skin-name">FADE</div>
+                    <div class="skin-rarity rarity-rare">RARE</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🌀</div>
+                    <div class="skin-name">DOPPLER</div>
+                    <div class="skin-rarity rarity-legendary">LEGENDARY</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">⚡</div>
+                    <div class="skin-name">CYREX</div>
+                    <div class="skin-rarity rarity-epic">EPIC</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🔴</div>
+                    <div class="skin-name">REDLINE</div>
+                    <div class="skin-rarity rarity-rare">RARE</div>
+                </div>
+                <div class="skin-card">
+                    <div class="skin-emoji">🎨</div>
+                    <div class="skin-name">HYPERBEAST</div>
+                    <div class="skin-rarity rarity-legendary">LEGENDARY</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <a href="#spin" class="control-btn">КРУТИТЬ (100₽)</a>
+            <a href="#stop" class="control-btn" style="background: #2d2d4e;">ОСТАНОВИТЬ</a>
+        </div>
+
+        <div style="margin: 40px 0; font-size: 20px; color: #aaa;">
+            Наведите на рулетку, чтобы замедлить прокрутку<br>
+            Нажмите "ОСТАНОВИТЬ", когда золотая линия будет на нужном скине
+        </div>
+
+        <div class="cases" id="cases">
+            <h2 class="cases-title">ПОПУЛЯРНЫЕ КЕЙСЫ</h2>
+            <div class="cases-grid">
+                <div class="case-card">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🎁</div>
+                    <h3>LEGENDARY CASE</h3>
+                    <div class="case-price">2,399 ₽</div>
+                    <a href="#buy" class="control-btn" style="padding: 10px 20px; font-size: 18px; width: 100%;">КУПИТЬ</a>
+                </div>
+                <div class="case-card">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🎁</div>
+                    <h3>EPIC CASE</h3>
+                    <div class="case-price">839 ₽</div>
+                    <a href="#buy" class="control-btn" style="padding: 10px 20px; font-size: 18px; width: 100%;">КУПИТЬ</a>
+                </div>
+                <div class="case-card">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🎁</div>
+                    <h3>RARE CASE</h3>
+                    <div class="case-price">1,799 ₽</div>
+                    <a href="#buy" class="control-btn" style="padding: 10px 20px; font-size: 18px; width: 100%;">КУПИТЬ</a>
+                </div>
+                <div class="case-card">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🎁</div>
+                    <h3>STARTER PACK</h3>
+                    <div class="case-price">449 ₽</div>
+                    <a href="#buy" class="control-btn" style="padding: 10px 20px; font-size: 18px; width: 100%;">КУПИТЬ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>STANDOFF 2</h3>
+                    <p>Официальная рулетка и маркетплейс скинов</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Навигация</h3>
+                    <ul class="footer-links">
+                        <li><a href="#roulette">Рулетка</a></li>
+                        <li><a href="#cases">Кейсы</a></li>
+                        <li><a href="#skins">Скины</a></li>
+                        <li><a href="#market">Торговая площадка</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Поддержка</h3>
+                    <ul class="footer-links">
+                        <li><a href="#help">Помощь</a></li>
+                        <li><a href="#rules">Правила</a></li>
+                        <li><a href="#contact">Контакты</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Правовая информация</h3>
+                    <ul class="footer-links">
+                        <li><a href="#terms">Условия использования</a></li>
+                        <li><a href="#privacy">Политика конфиденциальности</a></li>
+                        <li><a href="#cookies">Файлы cookie</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2025 Standoff 2. Все права защищены. Axlebolt ME FZ-LLC</p>
+                <p style="margin-top: 10px; font-size: 14px;">Это демонстрационная версия сайта</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
